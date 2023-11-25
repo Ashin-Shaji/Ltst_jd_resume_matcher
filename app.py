@@ -9,68 +9,84 @@ from langchain.llms import GooglePalm
 from fuzzywuzzy import fuzz
 
 def hybrid_similarity(jd_skills, resume_skills, threshold):
-  set1 = set(jd_skills)
-  set2 = set(resume_skills)
+  try:
+    set1 = set(jd_skills)
+    set2 = set(resume_skills)
 
-  matched_skills = list(set1.intersection(set2))  # Keep track of matched skills
-  not_matched = set1-set2
-  intersection_size = len(matched_skills)  # Initialize intersection_size here
+    matched_skills = list(set1.intersection(set2))  # Keep track of matched skills
+    not_matched = set1-set2
+    intersection_size = len(matched_skills)  # Initialize intersection_size here
 
-  if not_matched:
-    mtchd_after_lvn = []
-    for nm_skills in not_matched:
-      for rsm_skills in resume_skills:
-        leven_metric = fuzz.ratio(nm_skills, rsm_skills)
-        if leven_metric >= threshold:
-          mtchd_after_lvn.append(nm_skills)
+    if not_matched:
+      mtchd_after_lvn = []
+      for nm_skills in not_matched:
+        for rsm_skills in resume_skills:
+          leven_metric = fuzz.ratio(nm_skills, rsm_skills)
+          if leven_metric >= threshold:
+            mtchd_after_lvn.append(nm_skills)
 
-    matched_skills.extend(mtchd_after_lvn)  # Add these to matched skills
-    intersection_size += len(mtchd_after_lvn)
-    left_over_skills = set(not_matched) - set(mtchd_after_lvn)
+      matched_skills.extend(mtchd_after_lvn)  # Add these to matched skills
+      intersection_size += len(mtchd_after_lvn)
+      left_over_skills = set(not_matched) - set(mtchd_after_lvn)
 
-    if left_over_skills:
-      final_skl_mtch = []
-      for skl in left_over_skills:
-        for rsm_skl in resume_skills:
-          if skl in rsm_skl:
-            final_skl_mtch.append(skl)
+      if left_over_skills:
+        final_skl_mtch = []
+        for skl in left_over_skills:
+          for rsm_skl in resume_skills:
+            if skl in rsm_skl:
+              final_skl_mtch.append(skl)
 
-      matched_skills.extend(final_skl_mtch)  # Add these to matched skills
-      intersection_size += len(final_skl_mtch)
+        matched_skills.extend(final_skl_mtch)  # Add these to matched skills
+        intersection_size += len(final_skl_mtch)
 
-  union_size = len(set1)
-  if union_size == 0:
-      return 0, []
+    union_size = len(set1)
+    if union_size == 0:
+        return 0, []
 
-  return intersection_size/union_size, matched_skills
+    return intersection_size/union_size, matched_skills
+  except Exception as e:
+    st.error(f"An error occurred in the hybrid_similarity function: {str(e)}")
+    return None, None
 
 def extract_between_chars_regex(input_string, start_char, end_char):
-    pattern = re.compile(f'{re.escape(start_char)}(.*?){re.escape(end_char)}')
-    match = pattern.search(input_string)
+    try:
+        pattern = re.compile(f'{re.escape(start_char)}(.*?){re.escape(end_char)}')
+        match = pattern.search(input_string)
 
-    if match:
-        return match.group(1)
-    else:
+        if match:
+            return match.group(1)
+        else:
+            return None
+    except Exception as e:
+        st.error(f"An error occurred in the extract_between_chars_regex function: {str(e)}")
         return None
 
 def jd_skills_data_prep(text):
-  skills = str(text).lower()
-  skills = extract_between_chars_regex(skills, '[', ']')
-  if skills is not None:
-    skills = skills.replace('"', '').replace("'", "").replace(")", "").replace(" and", ", ").replace("&", ", ")
-    skills = skills.split(", ")
-  else:
-    skills = []
-  return skills
+  try:
+    skills = str(text).lower()
+    skills = extract_between_chars_regex(skills, '[', ']')
+    if skills is not None:
+      skills = skills.replace('"', '').replace("'", "").replace(")", "").replace(" and", ", ").replace("&", ", ")
+      skills = skills.split(", ")
+    else:
+      skills = []
+    return skills
+  except Exception as e:
+    st.error(f"An error occurred in the jd_skills_data_prep function: {str(e)}")
+    return []
 
 def get_palm_response(text, prompt):
-    os.environ['GOOGLE_API_KEY'] = 'AIzaSyCmdhOVj_KcpTxpWXH94DJOnBuXfZGZffg'
-    palm.configure(api_key=os.environ['GOOGLE_API_KEY'])
-    llm = GooglePalm()
-    llm.temperature = 0.1
-    llm_result = llm._generate([text + prompt])
+    try:
+        os.environ['GOOGLE_API_KEY'] = 'AIzaSyCmdhOVj_KcpTxpWXH94DJOnBuXfZGZffg'
+        palm.configure(api_key=os.environ['GOOGLE_API_KEY'])
+        llm = GooglePalm()
+        llm.temperature = 0.1
+        llm_result = llm._generate([text + prompt])
 
-    return llm_result.generations[0][0].text
+        return llm_result.generations[0][0].text
+    except Exception as e:
+        st.error(f"An error occurred in the get_palm_response function: {str(e)}")
+        return None
 
 def get_jd_skills_and_exp(jd_text):
 
@@ -87,49 +103,72 @@ def get_jd_skills_and_exp(jd_text):
     skills = jd_skills_data_prep(skills)
 
   # Experience
-  experience = float(get_palm_response(prompt2, jd_text))
+  try:
+    experience = float(get_palm_response(prompt2, jd_text))
+  except Exception as e:
+    st.error(f"An error occurred while converting experience to float: {str(e)}")
+    experience = None
 
   return jd_text, skills, experience
 
-st.set_page_config(
-    page_title="JD Parsing App",
-    page_icon="📑",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={
-        'Get Help': 'https://www.extremelycoolapp.com/help',
-        'Report a Bug': 'https://www.extremelycoolapp.com/bug',
-        'About': 'This is a header. This is an extremely cool app!'
-    }
-)
+try:
+    st.set_page_config(
+        page_title="JD Parsing App",
+        page_icon="📑",
+        layout="wide",
+        initial_sidebar_state="expanded",
+        menu_items={
+            'Get Help': 'https://www.extremelycoolapp.com/help',
+            'Report a Bug': 'https://www.extremelycoolapp.com/bug',
+            'About': 'This is a header. This is an extremely cool app!'
+        }
+    )
+except Exception as e:
+    st.error(f"An error occurred in the set_page_config function: {str(e)}")
 
-# st.sidebar.title("Navigation")
-# selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
+st.markdown("<h1 style='text-align: center; color: Blue'>JD & RESUME MATCHING MATRIX </h1>", unsafe_allow_html=True)
+
+st.sidebar.title("Navigation")
+selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
 
 jd_skills = ""
 jd_experience = ""
 jd_full_text = ""
-jd_full_text = st.text_area('', height=200)
-st.markdown(
-    """
-    <style>
-    .stButton > button {
-        display: block;
-        margin: 0 auto;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+if selected_option == "Upload File":
+    st.title('JD File')
 
-try:
+    uploaded_file = st.file_uploader("Choose a job description file", type=['txt', 'csv', 'docx', 'pdf'])
+    if uploaded_file is not None:
+        try:
+            data = pd.read_excel(uploaded_file)
+            st.markdown("<h2 style='text-align: center; color: #3498db;'>Job Description</h2>", unsafe_allow_html=True)
+            st.table(data[['Text']])
+        except Exception as e:
+            st.error(f"An error occurred while reading the uploaded file: {str(e)}")
+
+else:
+    st.markdown("<h3 style='text-align: left; color: Red'>Paste your JD Here </h3>", unsafe_allow_html=True)
+
+jd_full_text = st.text_area('', height=200)
+    st.markdown(
+        """
+        <style>
+        .stButton > button {
+            display: block;
+            margin: 0 auto;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
     if st.button("Extract Skills and Experience"):
         jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
         st.write(f"SKILLS REQUIRED: {jd_skills}")
         st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
-except Exception as e:
-    st.error(f"An error occurred: {e}")
 
-try:
-    resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
+    try:
+        resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
+    except Exception as e:
+        st.error(f"An error occurred while reading the CSV file: {str(e)}")
 
     if st.button("Matched Resumes"):
         jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
@@ -166,5 +205,3 @@ try:
         top_5_matches = final_data[['Unique_ID', 'Name','Matching_Score', 'Experience', 'Matched_Skills', 'Additional_skills', 'Phone Number', 'Email id']]
         top_5_matches = top_5_matches.head(5)
         top_5_matches
-except Exception as e:
-    st.error(f"An error occurred: {e}")

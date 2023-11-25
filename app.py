@@ -139,7 +139,7 @@ else:
         st.write(f"SKILLS REQUIRED: {jd_skills}")
         st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
 
-    resume_data = pd.read_csv(r"Resume_Parsed_Sample_v4_with_exp.csv")
+    resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
 
     if st.button("Matched Resumes"):
         jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
@@ -157,7 +157,7 @@ else:
 
         final_data = pd.DataFrame(final_list, columns=['JD_Skills', 'JD_Experience', 'Sl.No', 'Required_Skills', 'Additional_skills', 'Experience', 'Skill_Similarity', 'Matched_Skills'])
 
-        df_xlsx = pd.read_csv('/content/unicode-update_ltst_resume.csv')
+        df_xlsx = pd.read_csv('unicode-update_ltst_resume.csv')
         df_xlsx.rename(columns={'resume_index': 'Sl.No'}, inplace=True)
 
         final_data = pd.merge(final_data, df_xlsx[['Sl.No','Unique_ID', 'Name', 'Phone Number', 'Email id','Location of work', 'Position Applied For']], on='Sl.No')

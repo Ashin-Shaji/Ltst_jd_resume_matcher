@@ -129,8 +129,8 @@ st.set_page_config(
 
 st.markdown("<h1 style='text-align: center; color: Blue'>JD & RESUME MATCHING MATRIX </h1>", unsafe_allow_html=True)
 
-st.sidebar.title("Navigation")
-selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
+#st.sidebar.title("Navigation")
+#selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
 
 jd_skills = ""
 jd_experience = ""

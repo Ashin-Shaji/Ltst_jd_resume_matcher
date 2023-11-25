@@ -152,7 +152,10 @@ else:
           jd_skill_similarity, matched_skills = hybrid_similarity(jd_skills, eval(res_row[3]), threshold)
           Missing_Skills = list(set(jd_skills) - set(eval(res_row[3])))
           additional_skills = list(set(eval(res_row[3])) - set(jd_skills))
-          matched_skills = list(set(matched_skills))
+          #matched_skills = list(set(matched_skills))
+          # Calculate matched skills
+          matched_skills = list(set(jd_skills) - set(Missing_Skills))
+
           final_list.append([jd_skills, jd_experience, res_row[0], res_row[3], additional_skills, res_row[5], jd_skill_similarity, matched_skills])
 
         final_data = pd.DataFrame(final_list, columns=['JD_Skills', 'JD_Experience', 'Sl.No', 'Required_Skills', 'Additional_skills', 'Experience', 'Skill_Similarity', 'Matched_Skills'])
@@ -166,7 +169,7 @@ else:
 
         final_data['Matching_Score'] = final_data[['Skill_Similarity', 'Experience_Tag']].apply(lambda x: (x['Skill_Similarity'] + x['Experience_Tag']) / 2 if x['Skill_Similarity']>0 else 0, axis=1)
         final_data['Additional_skills'] = final_data['Additional_skills'].apply(lambda x: 'No additional skills' if not x else x)
-        #final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: str(x) if x else 'No skills matched')
+        #final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: x if x else 'No skills matched')
 
         final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
         final_data['Matching_Score'] = final_data['Matching_Score'].apply(lambda x: str(int(x * 100)) + '%')

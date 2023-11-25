@@ -8,6 +8,10 @@ import google.generativeai as palm
 from langchain.llms import GooglePalm
 from fuzzywuzzy import fuzz
 
+seed_value = 42
+os.environ['PYTHONHASHSEED'] = str(seed_value)
+random.seed(seed_value)
+
 def hybrid_similarity(jd_skills, resume_skills, threshold):
   try:
     set1 = set(jd_skills)

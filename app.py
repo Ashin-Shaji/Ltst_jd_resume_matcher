@@ -8,6 +8,7 @@ import google.generativeai as palm
 from langchain.llms import GooglePalm
 from fuzzywuzzy import fuzz
 
+#Set a seed for reproducibility
 seed_value = 42
 os.environ['PYTHONHASHSEED'] = str(seed_value)
 random.seed(seed_value)
@@ -84,7 +85,7 @@ def get_palm_response(text, prompt):
         os.environ['GOOGLE_API_KEY'] = 'AIzaSyCmdhOVj_KcpTxpWXH94DJOnBuXfZGZffg'
         palm.configure(api_key=os.environ['GOOGLE_API_KEY'])
         llm = GooglePalm()
-        llm.temperature = 0.1
+        llm.temperature = 0.2
         llm_result = llm._generate([text + prompt])
 
         return llm_result.generations[0][0].text
@@ -157,10 +158,8 @@ st.markdown(
     }
     </style>
     """, unsafe_allow_html=True)
-if jd_full_text.strip() == '':
-    st.warning("No JD passed.")
-else:
-  if st.button("Extract Skills and Experience"):
+
+if st.button("Extract Skills and Experience"):
     jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
     st.write(f"SKILLS REQUIRED: {jd_skills}")
     st.write(f"EXPERIENCE REQUIRED: {jd_experience}")

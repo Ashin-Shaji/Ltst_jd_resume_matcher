@@ -103,42 +103,32 @@ st.set_page_config(
     }
 )
 
-st.markdown("<h1 style='text-align: center; color: Blue'>JD & RESUME MATCHING MATRIX </h1>", unsafe_allow_html=True)
-
-st.sidebar.title("Navigation")
-selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
+# st.sidebar.title("Navigation")
+# selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
 
 jd_skills = ""
 jd_experience = ""
 jd_full_text = ""
-if selected_option == "Upload File":
-    st.title('JD File')
+jd_full_text = st.text_area('', height=200)
+st.markdown(
+    """
+    <style>
+    .stButton > button {
+        display: block;
+        margin: 0 auto;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    uploaded_file = st.file_uploader("Choose a job description file", type=['txt', 'csv', 'docx', 'pdf'])
-    if uploaded_file is not None:
-        data = pd.read_excel(uploaded_file)
-        st.markdown("<h2 style='text-align: center; color: #3498db;'>Job Description</h2>", unsafe_allow_html=True)
-        st.table(data[['Text']])
-
-else:
-    st.markdown("<h3 style='text-align: left; color: Red'>Paste your JD Here </h3>", unsafe_allow_html=True)
-
-    jd_full_text = st.text_area('', height=200)
-    st.markdown(
-        """
-        <style>
-        .stButton > button {
-            display: block;
-            margin: 0 auto;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
+try:
     if st.button("Extract Skills and Experience"):
         jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
         st.write(f"SKILLS REQUIRED: {jd_skills}")
         st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
+except Exception as e:
+    st.error(f"An error occurred: {e}")
 
+try:
     resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
 
     if st.button("Matched Resumes"):
@@ -176,3 +166,5 @@ else:
         top_5_matches = final_data[['Unique_ID', 'Name','Matching_Score', 'Experience', 'Matched_Skills', 'Additional_skills', 'Phone Number', 'Email id']]
         top_5_matches = top_5_matches.head(5)
         top_5_matches
+except Exception as e:
+    st.error(f"An error occurred: {e}")

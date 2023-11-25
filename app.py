@@ -157,8 +157,10 @@ st.markdown(
     }
     </style>
     """, unsafe_allow_html=True)
-
-if st.button("Extract Skills and Experience"):
+if jd_full_text.strip() == '':
+    st.warning("No JD passed.")
+else:
+  if st.button("Extract Skills and Experience"):
     jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
     st.write(f"SKILLS REQUIRED: {jd_skills}")
     st.write(f"EXPERIENCE REQUIRED: {jd_experience}")

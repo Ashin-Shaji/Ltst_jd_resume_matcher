@@ -129,23 +129,23 @@ st.set_page_config(
 
 st.markdown("<h1 style='text-align: center; color: Blue'>JD & RESUME MATCHING MATRIX </h1>", unsafe_allow_html=True)
 
-#st.sidebar.title("Navigation")
+st.sidebar.title("Navigation")
 selected_option = st.sidebar.radio("Select an Option", ["Extract JD"])
 
 jd_skills = ""
 jd_experience = ""
 jd_full_text = ""
-#if selected_option == "Upload File":
- #   st.title('JD File')
+if selected_option == "Upload File":
+    st.title('JD File')
 
-  #  uploaded_file = st.file_uploader("Choose a job description file", type=['txt', 'csv', 'docx', 'pdf'])
-   # if uploaded_file is not None:
-    #    data = pd.read_excel(uploaded_file)
-st.markdown("<h2 style='text-align: center; color: #3498db;'>Job Description</h2>", unsafe_allow_html=True)
-st.table(data[['Text']])
+    uploaded_file = st.file_uploader("Choose a job description file", type=['txt', 'csv', 'docx', 'pdf'])
+    if uploaded_file is not None:
+        data = pd.read_excel(uploaded_file)
+        st.markdown("<h2 style='text-align: center; color: #3498db;'>Job Description</h2>", unsafe_allow_html=True)
+        st.table(data[['Text']])
 
-#else:
-st.markdown("<h3 style='text-align: left; color: Red'>Paste your JD Here </h3>", unsafe_allow_html=True)
+else:
+    st.markdown("<h3 style='text-align: left; color: Red'>Paste your JD Here </h3>", unsafe_allow_html=True)
 
 jd_full_text = st.text_area('', height=200)
 st.markdown(

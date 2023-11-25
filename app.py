@@ -8,7 +8,6 @@ import google.generativeai as palm
 from langchain.llms import GooglePalm
 from fuzzywuzzy import fuzz
 
-#Set a seed for reproducibility
 seed_value = 42
 os.environ['PYTHONHASHSEED'] = str(seed_value)
 random.seed(seed_value)
@@ -85,7 +84,7 @@ def get_palm_response(text, prompt):
         os.environ['GOOGLE_API_KEY'] = 'AIzaSyCmdhOVj_KcpTxpWXH94DJOnBuXfZGZffg'
         palm.configure(api_key=os.environ['GOOGLE_API_KEY'])
         llm = GooglePalm()
-        llm.temperature = 0.2
+        llm.temperature = 0.1
         llm_result = llm._generate([text + prompt])
 
         return llm_result.generations[0][0].text
@@ -148,56 +147,59 @@ if selected_option == "Upload File":
 else:
     st.markdown("<h3 style='text-align: left; color: Red'>Paste your JD Here </h3>", unsafe_allow_html=True)
 
-jd_full_text = st.text_area('', height=200)
-st.markdown(
-    """
-    <style>
-    .stButton > button {
-        display: block;
-        margin: 0 auto;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    jd_full_text = st.text_area('', height=200)
+    st.markdown(
+        """
+        <style>
+        .stButton > button {
+            display: block;
+            margin: 0 auto;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-if st.button("Extract Skills and Experience"):
-    jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
-    st.write(f"SKILLS REQUIRED: {jd_skills}")
-    st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
+    if jd_full_text.strip() == '':
+        st.warning("No JD passed.")
+    else:
+        if st.button("Extract Skills and Experience"):
+            jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
+            st.write(f"SKILLS REQUIRED: {jd_skills}")
+            st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
 
-resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
+        resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
 
-if st.button("Matched Resumes"):
-    jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
-    st.write(f"SKILLS REQUIRED: {jd_skills}")
-    st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
+        if st.button("Matched Resumes"):
+            jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
+            st.write(f"SKILLS REQUIRED: {jd_skills}")
+            st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
 
-    threshold = 90
-    final_list = []
-    for j, res_row in resume_data.iterrows():
-      jd_skill_similarity, matched_skills = hybrid_similarity(jd_skills, eval(res_row[3]), threshold)
-      Missing_Skills = list(set(jd_skills) - set(eval(res_row[3])))
-      additional_skills = list(set(eval(res_row[3])) - set(jd_skills))
-      #matched_skills = list(set(matched_skills))
-      # Calculate matched skills
-      matched_skills = list(set(jd_skills) - set(Missing_Skills))
+            threshold = 90
+            final_list = []
+            for j, res_row in resume_data.iterrows():
+              jd_skill_similarity, matched_skills = hybrid_similarity(jd_skills, eval(res_row[3]), threshold)
+              Missing_Skills = list(set(jd_skills) - set(eval(res_row[3])))
+              additional_skills = list(set(eval(res_row[3])) - set(jd_skills))
+              #matched_skills = list(set(matched_skills))
+              # Calculate matched skills
+              matched_skills = list(set(jd_skills) - set(Missing_Skills))
 
-      final_list.append([jd_skills, jd_experience, res_row[0], res_row[3], additional_skills, res_row[5], jd_skill_similarity, matched_skills])
+              final_list.append([jd_skills, jd_experience, res_row[0], res_row[3], additional_skills, res_row[5], jd_skill_similarity, matched_skills])
 
-    final_data = pd.DataFrame(final_list, columns=['JD_Skills', 'JD_Experience', 'Sl.No', 'Required_Skills', 'Additional_skills', 'Experience', 'Skill_Similarity', 'Matched_Skills'])
+            final_data = pd.DataFrame(final_list, columns=['JD_Skills', 'JD_Experience', 'Sl.No', 'Required_Skills', 'Additional_skills', 'Experience', 'Skill_Similarity', 'Matched_Skills'])
 
-    df_xlsx = pd.read_csv('unicode-update_ltst_resume.csv')
-    df_xlsx.rename(columns={'resume_index': 'Sl.No'}, inplace=True)
+            df_xlsx = pd.read_csv('unicode-update_ltst_resume.csv')
+            df_xlsx.rename(columns={'resume_index': 'Sl.No'}, inplace=True)
 
-    final_data = pd.merge(final_data, df_xlsx[['Sl.No','Unique_ID', 'Name', 'Phone Number', 'Email id','Location of work', 'Position Applied For']], on='Sl.No')
+            final_data = pd.merge(final_data, df_xlsx[['Sl.No','Unique_ID', 'Name', 'Phone Number', 'Email id','Location of work', 'Position Applied For']], on='Sl.No')
 
-    final_data['Experience_Tag'] = final_data[['JD_Experience', 'Experience']].apply(lambda x: 1 if x['Experience'] >= x['JD_Experience'] else 0, axis=1)
+            final_data['Experience_Tag'] = final_data[['JD_Experience', 'Experience']].apply(lambda x: 1 if x['Experience'] >= x['JD_Experience'] else 0, axis=1)
 
-    final_data['Matching_Score'] = final_data[['Skill_Similarity', 'Experience_Tag']].apply(lambda x: (x['Skill_Similarity'] + x['Experience_Tag']) / 2 if x['Skill_Similarity']>0 else 0, axis=1)
-    final_data['Additional_skills'] = final_data['Additional_skills'].apply(lambda x: 'No additional skills' if not x else x)
-    #final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: x if x else 'No skills matched')
+            final_data['Matching_Score'] = final_data[['Skill_Similarity', 'Experience_Tag']].apply(lambda x: (x['Skill_Similarity'] + x['Experience_Tag']) / 2 if x['Skill_Similarity']>0 else 0, axis=1)
+            final_data['Additional_skills'] = final_data['Additional_skills'].apply(lambda x: 'No additional skills' if not x else x)
+            #final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: x if x else 'No skills matched')
 
-    final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
-    final_data['Matching_Score'] = final_data['Matching_Score'].apply(lambda x: str(int(x * 100)) + '%')
-    top_5_matches = final_data[['Unique_ID', 'Name','Matching_Score', 'Experience', 'Matched_Skills', 'Additional_skills', 'Phone Number', 'Email id']]
-    top_5_matches = top_5_matches.head(5)
-    top_5_matches
+            final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
+            final_data['Matching_Score'] = final_data['Matching_Score'].apply(lambda x: str(int(x * 100)) + '%')
+            top_5_matches = final_data[['Unique_ID', 'Name','Matching_Score', 'Experience', 'Matched_Skills', 'Additional_skills', 'Phone Number', 'Email id']]
+            top_5_matches = top_5_matches.head(5)
+            top_5_matches

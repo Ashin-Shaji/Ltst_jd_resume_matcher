@@ -80,7 +80,7 @@ def get_palm_response(text, prompt):
         os.environ['GOOGLE_API_KEY'] = 'AIzaSyCmdhOVj_KcpTxpWXH94DJOnBuXfZGZffg'
         palm.configure(api_key=os.environ['GOOGLE_API_KEY'])
         llm = GooglePalm()
-        llm.temperature = 0.1
+        llm.temperature = 0.2
         llm_result = llm._generate([text + prompt])
 
         return llm_result.generations[0][0].text

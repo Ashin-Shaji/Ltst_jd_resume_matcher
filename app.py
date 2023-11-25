@@ -162,7 +162,7 @@ else:
         """, unsafe_allow_html=True)
 
     if jd_full_text.strip() == '':
-        st.warning("No JD matched.")
+        st.warning("No JD passed.")
     elif len(jd_full_text.split()) < 30:
         st.warning("Input has less than 30 words.")
     else:

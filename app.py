@@ -171,7 +171,7 @@ else:
             st.write(f"SKILLS REQUIRED: {jd_skills}")
             st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
 
-        resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp.csv")
+        resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp_refurb.csv")
 
         if st.button("Matched Resumes"):
             jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)

@@ -93,6 +93,28 @@ def get_palm_response(text, prompt):
         print(f"An error occurred in the get_palm_response function: {str(e)}")
         return None
 
+# def get_jd_skills_and_exp(jd_text):
+#     # Prompts
+#     prompt1 = " Return python list with skill names only picked from above text"
+#     prompt2 = " Return minimum experience in years number only"
+
+#     # Skills
+#     skills = get_palm_response(prompt1, jd_text)
+#     skills = skills.lower()
+#     try:
+#         skills = ast.literal_eval(skills)
+#     except:
+#         skills = jd_skills_data_prep(skills)
+
+#     # Experience
+#     try:
+#         experience = float(get_palm_response(prompt2, jd_text))
+#     except Exception as e:
+#         print(f"An error occurred while converting experience to float: {str(e)}")
+#         experience = None
+
+#     return jd_text, skills, experience
+
 def get_jd_skills_and_exp(jd_text):
     # Prompts
     prompt1 = " Return python list with skill names only picked from above text"
@@ -105,6 +127,10 @@ def get_jd_skills_and_exp(jd_text):
         skills = ast.literal_eval(skills)
     except:
         skills = jd_skills_data_prep(skills)
+
+    # Split by '&' in each skill and flatten the list
+    skills = [skill.replace('&', ',') for skill in skills]
+    #skills = [item.strip() for sublist in skills for item in sublist]
 
     # Experience
     try:
@@ -217,8 +243,27 @@ else:
             final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
             final_data['Matching_Score'] = final_data['Matching_Score'].apply(
                 lambda x: str(int(x * 100)) + '%')
-            top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
-                                        'Additional_skills', 'Phone Number', 'Email id']]
-            top_5_matches = top_5_matches.head(5)
-            top_5_matches
+            # top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
+            #                             'Additional_skills', 'Phone Number', 'Email id']]
+            #top_5_matches = top_5_matches.head(5)
+            #top_5_matches
 
+
+            
+            base_url = "https://storage.googleapis.com/demo_jd_bucket-1/GCP/"
+            # top_5_matches['View'] = top_5_matches['Unique_ID'].apply(lambda x: base_url + x + '.pdf' if x.startswith('UN') else x)
+            final_data['View'] = final_data['Unique_ID'].apply(lambda x: base_url + x + '.pdf' if x.startswith('UN') else x)
+            buttons = ""
+            # for i, row in top_5_matches.iterrows():
+            #     link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+            #     buttons += link + " "  # Add a space between buttons
+            
+            for i, row in final_data.iterrows():
+                link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+                buttons += link + " "                
+                
+            top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
+                                        'Additional_skills', 'Phone Number', 'Email id']].head(5)
+            top_5_matches
+            # Display the buttons in a single markdown, centered
+            st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)

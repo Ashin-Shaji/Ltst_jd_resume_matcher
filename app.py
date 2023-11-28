@@ -261,23 +261,4 @@ else:
             top_5_matches
             # Display the buttons in a single markdown, centered
             st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
-
-
-
-            # # Create a single string with all buttons for rows with accuracy above 40%
-            buttons = ""
-            for i, row in top_5_matches.iterrows():
-                # Check if the accuracy is above 40% before creating the button
-                if row['Matching_Score'] > 40:
-                    link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
-                    buttons += link + " "  # Add a space between buttons
             
-            # Drop the 'View' column if it exists
-            if 'View' in top_5_matches.columns:
-                top_5_matches = top_5_matches.drop(columns=['View'], axis=1)
-                #top_5_matches
-            # Display the buttons in a single markdown, centered
-            st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
-
-
-

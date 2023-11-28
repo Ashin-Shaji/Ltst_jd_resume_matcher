@@ -264,13 +264,19 @@ else:
 
 
 
-# Filter rows based on accuracy threshold (e.g., 40%)
-            filtered_rows = top_5_matches[top_5_matches['Matching_Score'].str.rstrip('%').astype('float') > 40]
+# Create a single string with all buttons for rows with accuracy above 40%
+           buttons = ""
+           for i, row in top_5_matches.iterrows():
+    # Check if the accuracy is above 40% before creating the button
+               if row['Matching_Score'] > 40:
+                   link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+                   buttons += link + " "  # Add a space between buttons
 
-# Display buttons for filtered rows
-            for i, row in filtered_rows.iterrows():
-                link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
-                top_5_matches = top_5_matches.drop(columns=['View'],axis=1)
-                top_5_matches
-                st.markdown(link, unsafe_allow_html=True)
+# Drop the 'View' column if it exists
+           if 'View' in top_5_matches.columns:
+               top_5_matches = top_5_matches.drop(columns=['View'], axis=1)
+               top_5_matches
+# Display the buttons in a single markdown, centered
+           st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
+
 

@@ -245,9 +245,9 @@ else:
                 lambda x: str(int(x * 100)) + '%')
             final_data['Experience'] = final_data['Experience'].apply(lambda x: round(x, 2))#round resume exp to two decimals
             final_data = final_data[final_data['Experience'] >= final_data['JD_Experience']]#show rows only where resume exp >= jd exp- not yet
+            final_data = final_data[final_data['Matched_Skills'].apply(lambda x: bool(eval(x)))]#drop rows where matched skill is empty - not yet
             top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
                                         'Additional_skills', 'Phone Number', 'Email id']]
-            top_5_matches = top_5_matches[top_5_matches['Matched_Skills'].apply(lambda x: bool(eval(x)))]#drop rows where matched skill is empty - not yet
             top_5_matches = top_5_matches.head(5)
             #top_5_matches
             

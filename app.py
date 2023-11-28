@@ -264,11 +264,11 @@ else:
 
 
 
-            buttons = ""
-            for i, row in top_5_matches.iterrows():
-                if float(row['Matching_Score'][:-1]) > 25:  # Check if accuracy is above 25%
-                    link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
-                    buttons += link + " "  # Add a space between buttons
+                  # Filter rows based on accuracy threshold (e.g., 40%)
+            filtered_rows = top_5_matches[top_5_matches['Matching_Score'].str.rstrip('%').astype('float') > 40]
 
-# Display the buttons in a single markdown, centered
-            st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
+# Display buttons for filtered rows
+            for i, row in filtered_rows.iterrows():
+                link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+                st.markdown(link, unsafe_allow_html=True)
+

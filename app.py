@@ -238,8 +238,7 @@ else:
             final_data['Additional_skills'] = final_data['Additional_skills'].apply(
                 lambda x: 'No additional skills' if not x else x)
             
-            # final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: x if x else 'No skills matched')
-            final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: str(x) if x else 'No skills matched')
+            final_data['Matched_Skills'] = final_data['Matched_Skills'].apply(lambda x: x if x else 'No skills matched')
             
             final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
             final_data['Matching_Score'] = final_data['Matching_Score'].apply(

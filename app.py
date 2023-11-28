@@ -257,8 +257,8 @@ else:
             #    link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
               #  buttons += link + " "  # Add a space between buttons     
                 
-            top_5_matches = top_5_matches.drop(columns=['View'],axis=1)
-            top_5_matches
+            #top_5_matches = top_5_matches.drop(columns=['View'],axis=1)
+            #top_5_matches
             # Display the buttons in a single markdown, centered
             #st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
 
@@ -270,5 +270,7 @@ else:
 # Display buttons for filtered rows
             for i, row in filtered_rows.iterrows():
                 link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+                top_5_matches = top_5_matches.drop(columns=['View'],axis=1)
+                top_5_matches
                 st.markdown(link, unsafe_allow_html=True)
 

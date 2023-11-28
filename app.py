@@ -70,7 +70,7 @@ def jd_skills_data_prep(text):
         skills = str(text).lower()
         skills = extract_between_chars_regex(skills, '[', ']')
         if skills is not None:
-            skills = skills.replace('"', '').replace("'", "").replace(")", "").replace(" and", ", ").replace("&", ", ").replace("/", ", ").replace("(", ", ")
+            skills = skills.replace('"', '').replace("'", "").replace(")", "").replace(" and", ", ").replace("&", ", ").replace("/", ", ")
             skills = skills.split(", ")
         else:
             skills = []

@@ -199,7 +199,7 @@ else:
         resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp_refurb.csv")
 
         if st.button("Matched Resumes"):
-#gap for jd extract
+#gap for jd extract          # change 3
             threshold = 90
             final_list = []
             for j, res_row in resume_data.iterrows():
@@ -235,7 +235,7 @@ else:
             
             #not yet - twice skills
             final_data['Matching_Score'] = final_data[['Skill_Similarity', 'Experience_Tag']].apply(
-            lambda x: (2 * x['Skill_Similarity'] + x['Experience_Tag']) / (2 + 1) if x['Skill_Similarity'] > 0 else 0,axis=1)#change 2
+            lambda x: (2 * x['Skill_Similarity'] + x['Experience_Tag']) / (2 + 1) if x['Skill_Similarity'] > 0 else 0,axis=1)# change 2
             
             final_data['Additional_skills'] = final_data['Additional_skills'].apply(
                 lambda x: 'No additional skills' if not x else x)
@@ -251,7 +251,7 @@ else:
             #             (final_data['Experience'] == final_data['JD_Experience'] - 2)] 
             final_data = final_data[(final_data['Experience'] >= final_data['JD_Experience']) | 
                         ((final_data['Experience'] >= final_data['JD_Experience'] - 2) & 
-                         (final_data['Experience'] < final_data['JD_Experience']))]#change 1                                                                                    
+                         (final_data['Experience'] < final_data['JD_Experience']))]# change 1                                                                                    
 
             top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
                                         'Additional_skills', 'Phone Number', 'Email id']]

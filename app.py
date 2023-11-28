@@ -243,6 +243,7 @@ else:
             final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
             final_data['Matching_Score'] = final_data['Matching_Score'].apply(
                 lambda x: str(int(x * 100)) + '%')
+            final_data['Experience'] = final_data['Experience'].apply(lambda x: round(x, 2))
             top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
                                         'Additional_skills', 'Phone Number', 'Email id']]
             top_5_matches = top_5_matches.head(5)

@@ -186,11 +186,11 @@ else:
         </style>
         """, unsafe_allow_html=True)
 
-    # if jd_full_text.strip() == '':
-    #     st.warning("No JD passed.")
-    # elif len(jd_full_text.split()) < 25:
-    #     st.warning("Input has less than 25 words.")
-    # else:
+    if jd_full_text.strip() == '':
+        st.warning("No JD passed.")
+    elif len(jd_full_text.split()) < 25:
+        st.warning("Input has less than 25 words.")
+    else:
         if st.button("Extract Skills and Experience"):
             jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
             st.write(f"SKILLS REQUIRED: {jd_skills}")

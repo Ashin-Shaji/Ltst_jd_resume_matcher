@@ -8,9 +8,16 @@ import google.generativeai as palm
 from langchain.llms import GooglePalm
 from fuzzywuzzy import fuzz
 
-seed_value = 42
-os.environ['PYTHONHASHSEED'] = str(seed_value)
-random.seed(seed_value)
+# seed_value = 42
+# os.environ['PYTHONHASHSEED'] = str(seed_value)
+# random.seed(seed_value)
+
+# Initialize session state variables
+if 'jd_skills' not in st.session_state:
+    st.session_state['jd_skills'] = []
+
+if 'jd_experience' not in st.session_state:
+    st.session_state['jd_experience'] = 0
 
 def hybrid_similarity(jd_skills, resume_skills, threshold):
     try:

@@ -199,10 +199,7 @@ else:
         resume_data = pd.read_csv("Resume_Parsed_Sample_v4_with_exp_refurb.csv")
 
         if st.button("Matched Resumes"):
-            # jd_full_text, jd_skills, jd_experience = get_jd_skills_and_exp(jd_full_text)
-            # st.write(f"SKILLS REQUIRED: {jd_skills}")
-            # st.write(f"EXPERIENCE REQUIRED: {jd_experience}")
-
+#gap for jd extract
             threshold = 90
             final_list = []
             for j, res_row in resume_data.iterrows():

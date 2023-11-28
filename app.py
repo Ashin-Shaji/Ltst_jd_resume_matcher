@@ -275,7 +275,7 @@ else:
             # Drop the 'View' column if it exists
             if 'View' in top_5_matches.columns:
                 top_5_matches = top_5_matches.drop(columns=['View'], axis=1)
-            
+                top_5_matches
             # Display the buttons in a single markdown, centered
             st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
 

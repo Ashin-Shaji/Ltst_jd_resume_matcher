@@ -252,12 +252,23 @@ else:
             
             base_url = "https://storage.googleapis.com/demo_jd_bucket-1/GCP/"
             top_5_matches['View'] = top_5_matches['Unique_ID'].apply(lambda x: base_url + x + '.pdf' if x.startswith('UN') else x)
-            buttons = ""
-            for i, row in top_5_matches.iterrows():
-                link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
-                buttons += link + " "  # Add a space between buttons     
+            #buttons = ""
+            #for i, row in top_5_matches.iterrows():
+            #    link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+               # buttons += link + " "  # Add a space between buttons     
                 
             top_5_matches = top_5_matches.drop(columns=['View'],axis=1)
             top_5_matches
             # Display the buttons in a single markdown, centered
+            #st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)
+
+
+
+            buttons = ""
+            for i, row in top_5_matches.iterrows():
+                if float(row['Matching_Score'][:-1]) > 25:  # Check if accuracy is above 25%
+                    link = f'<a href="{row["View"]}" target="_blank"><input type="button" value="{row["Unique_ID"]}" style="background-color: #8a2be2; color: white;"></a>'
+                    buttons += link + " "  # Add a space between buttons
+
+# Display the buttons in a single markdown, centered
             st.markdown(f'<div style="text-align: center">{buttons}</div>', unsafe_allow_html=True)

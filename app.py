@@ -243,13 +243,12 @@ else:
             final_data = final_data.sort_values(['Matching_Score'], ascending=[False]).reset_index(drop=True)
             final_data['Matching_Score'] = final_data['Matching_Score'].apply(
                 lambda x: str(int(x * 100)) + '%')
-            final_data['Experience'] = final_data['Experience'].apply(lambda x: round(x, 2))
+            final_data['Experience'] = final_data['Experience'].apply(lambda x: round(x, 2))#round resume exp to two decimals
+            final_data = final_data[final_data['Experience'] >= final_data['JD_Experience']]#show rows only where resume exp >= jd exp
             top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
                                         'Additional_skills', 'Phone Number', 'Email id']]
             top_5_matches = top_5_matches.head(5)
             #top_5_matches
-
-
             
             base_url = "https://storage.googleapis.com/demo_jd_bucket-1/GCP/"
             top_5_matches['View'] = top_5_matches['Unique_ID'].apply(lambda x: base_url + x + '.pdf' if x.startswith('UN') else x)

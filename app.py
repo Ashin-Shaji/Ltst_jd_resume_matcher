@@ -250,8 +250,8 @@ else:
                 lambda x: str(int(x * 100)) + '%')
             final_data['Experience'] = final_data['Experience'].apply(lambda x: round(x, 2))#round resume exp to two decimals
             # final_data = final_data[final_data['Experience'] >= final_data['JD_Experience']]#show rows only where resume exp >= jd exp- not yet
-            # final_data = final_data[(final_data['Experience'] >= final_data['JD_Experience']) | 
-            #             (final_data['Experience'] == final_data['JD_Experience'] - 2)]#change 1
+            final_data = final_data[(final_data['Experience'] = final_data['JD_Experience']) | 
+                        (final_data['Experience'] == final_data['JD_Experience'] - 2)]#change 1
 
             top_5_matches = final_data[['Unique_ID', 'Name', 'Matching_Score', 'Experience', 'Matched_Skills',
                                         'Additional_skills', 'Phone Number', 'Email id']]
